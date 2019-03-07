@@ -1,0 +1,8 @@
+#!/bin/bash
+
+location=$(\cd $(dirname $0); /bin/pwd)
+watchdog=$location/watchdog.py
+
+PYTHONPATH="$location/python2.6/site-packages:$PYTHONPATH"; export PYTHONPATH;
+
+exec python $watchdog $@

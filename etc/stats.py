@@ -1,0 +1,88 @@
+import psutil
+import platform
+import time
+import os
+
+"""
+Get Process User ID
+"""
+def getUserId(pid):
+    return psutil.Process(pid).uids().real
+    
+"""
+Get Process User Group ID
+"""
+def getUserGroupId(pid):
+    return psutil.Process(pid).gids().real
+    
+
+def  getStartTime(pid):
+    starttime = time
+    try:
+       starttime = psutil.Process(pid).create_time()
+       
+    except:
+       pass
+       
+    return starttime
+    
+def getProcessName(pid):
+    return psutil.Process(pid).name()
+    
+def getCPUFamily(pid):
+    return "TODO"
+    
+def getPlatform(pid):
+    return platform.platform()
+    
+def getCPUArchitecture(pid):
+    return "TODO"
+    
+def getCPUMHz(pid):
+    return "TODO"
+
+def getCPUs(pid):
+    return str(psutil.cpu_count(False)) + "/" + str(psutil.cpu_count())
+
+def getTotalSwap(pid):
+    return psutil.swap_memory().total >> 20
+
+def getTotalRAM(pid):
+    return psutil.virtual_memory().total >> 20
+
+
+def getCPUTime(pid):
+    proc = psutil.Process(pid)
+    return proc.cpu_times().user
+    
+def getChildrenCPUTime(pid):
+    proc = psutil.Process(pid)
+    return proc.cpu_times().children_user
+    
+
+def getMaxRAMUsage(pid, prevRAMUsage = 0):
+    proc = psutil.Process(pid)
+    return max(prevRAMUsage, proc.memory_info().rss >> 20)
+
+def getMaxVirtualMemUsage(pid, prevVirtualMemUsage = 0):
+    proc = psutil.Process(pid)
+    return max(prevVirtualMemUsage, proc.memory_info().vms >> 20)
+
+
+def getDisplayInfo(pid):
+    return "TODO"
+
+
+def getLogFiles(pid):
+    proc = psutil.Process(pid)
+    logFile = None
+    errFile = None
+    # This is not the best way to determine CC log files
+    for fd in proc.open_files():
+        fileName = os.path.basename(fd.path)
+        if fileName.startswith("ccompiler"):
+            if fileName.endswith(".log"):
+                logFile = fd.path
+            elif fileName.endswith(".stderr"):
+                errFile = fd.path
+    return logFile, errFile
